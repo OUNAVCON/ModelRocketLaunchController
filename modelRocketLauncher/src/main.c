@@ -31,10 +31,14 @@
 #include <stdlib.h>
 #include "diag/Trace.h"
 
-#include "Timer.h"
+
 #include "BlinkLed.h"
 #include "igniter.h"
 #include "sevenSegment.h"
+#include "beeper.h"
+#include "rcc.h"
+
+extern __IO uint32_t TimeDisplay;
 
 // ----------------------------------------------------------------------------
 //
@@ -66,9 +70,6 @@
 
 // ----- Timing definitions -------------------------------------------------
 
-// Keep the LED on for 2/3 of a second.
-#define BLINK_ON_TICKS  (TIMER_FREQUENCY_HZ * 3 / 4)
-#define BLINK_OFF_TICKS (TIMER_FREQUENCY_HZ - BLINK_ON_TICKS)
 
 // ----- main() ---------------------------------------------------------------
 
@@ -84,6 +85,8 @@ main(int argc, char* argv[])
 {
 	initIgniter();
 	initSevenSegment();
+	initBeeper();
+	initRtc();
 	/*
 	 * Run power up self test
 	 * validateSwitch();
@@ -96,24 +99,22 @@ main(int argc, char* argv[])
   // at high speed.
   trace_printf("System clock: %u Hz\n", SystemCoreClock);
 
-  timer_start();
-
   
   uint32_t seconds = 0;
 
   // Infinite loop
   while (1)
     {
+
       blink_led_on();
-      timer_sleep(seconds == 0 ? TIMER_FREQUENCY_HZ : BLINK_ON_TICKS);
 
       blink_led_off();
-      timer_sleep(BLINK_OFF_TICKS);
+
 
       ++seconds;
 
       // Count seconds on the trace device.
-      trace_printf("Second %u\n", seconds);
+      trace_printf("Second %u\n", TimeDisplay);
 
       /*
        * if(secondInterrupt){
@@ -127,6 +128,27 @@ main(int argc, char* argv[])
     }
   // Infinite loop, never return.
 }
+
+/**
+  * @brief  Configures the nested vectored interrupt controller.
+  * @param  None
+  * @retval None
+  */
+void NVIC_Configuration(void)
+{
+  NVIC_InitTypeDef NVIC_InitStructure;
+
+  /* Configure one bit for preemption priority */
+  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+
+  /* Enable the RTC Interrupt */
+  NVIC_InitStructure.NVIC_IRQChannel = RTC_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+}
+
 
 #pragma GCC diagnostic pop
 

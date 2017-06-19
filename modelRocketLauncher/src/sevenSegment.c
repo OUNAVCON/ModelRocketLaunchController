@@ -1,15 +1,5 @@
 #include <sevenSegment.h>
 #include "stm32f10x.h"
-/*
- * PA0-PA6
- * PA0 - a
- * PA1 - b
- * PA2 - c
- * PA3 - d
- * PA4 - e
- * PA5 - f
- * PA6 - g
- */
 
 /*
  * Connections
@@ -36,13 +26,14 @@ void initSevenSegment(){
 	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	  for(index = 0; index < 7; index++){
 		  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
-		  GPIO_Init(GPIOA_BASE, &GPIO_InitStructure);
+		  GPIO_Init(GPIOA, &GPIO_InitStructure);
 	  }
 }
 
 
 void updateSevenSegment(unsigned int value){
-	unsigned char character = 0;
+	uint16_t character = 0;
+	uint16_t currentPortValue = 0;
 
 	switch(value){
 		case 0:
@@ -80,7 +71,8 @@ void updateSevenSegment(unsigned int value){
 			break;
 	}
 
-	GPIO_Write(GPIOA_BASE, character);
+	currentPortValue = GPIO_ReadOutputData(GPIOA);
+	GPIO_Write(GPIOA, (currentPortValue & 0x3f) | character);
 }
 
 
