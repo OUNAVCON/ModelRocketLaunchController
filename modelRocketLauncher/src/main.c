@@ -105,16 +105,21 @@ main(int argc, char* argv[])
   // Infinite loop
   while (1)
     {
+	  if(seconds != TimeDisplay){
+		  if((TimeDisplay%2) == 0) {
+			  blink_led_on();
+		  }else {
+			  blink_led_off();
+		  }
+		  seconds = TimeDisplay;
+		  trace_printf("Second %u\n", seconds);
+	  }
 
-      blink_led_on();
-
-      blink_led_off();
 
 
-      ++seconds;
 
       // Count seconds on the trace device.
-      trace_printf("Second %u\n", TimeDisplay);
+      //trace_printf("Second %u\n", TimeDisplay);
 
       /*
        * if(secondInterrupt){

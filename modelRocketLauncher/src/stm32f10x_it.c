@@ -158,7 +158,7 @@ void RTC_IRQHandler(void)
 
 
     /* Enable time update */
-    TimeDisplay = 1;
+    TimeDisplay++;
 
     /* Wait until last write operation on RTC registers has finished */
     RTC_WaitForLastTask();
