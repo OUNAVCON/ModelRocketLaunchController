@@ -83,6 +83,8 @@ extern __IO uint32_t TimeDisplay;
 int
 main(int argc, char* argv[])
 {
+	uint32_t seconds = 0;
+	uint8_t count = 9;
 	initIgniter();
 	initSevenSegment();
 	initBeeper();
@@ -100,26 +102,35 @@ main(int argc, char* argv[])
   trace_printf("System clock: %u Hz\n", SystemCoreClock);
 
   
-  uint32_t seconds = 0;
-
   // Infinite loop
   while (1)
     {
-	  if(seconds != TimeDisplay){
+
+	  /*
+	   * Test the output state. Make sure we aren't failing.   //check for current draw on high side source.
+	   * Check battery voltage...don't want to try and fire with a low battery.
+	   */
+
+	  if(seconds != TimeDisplay && DEADMAN_SWITCH_STATE_ACTIVE == readCurrentDeadManSwitchState()){ //Seconds loop.
 		  if((TimeDisplay%2) == 0) {
 			  blink_led_on();
 		  }else {
 			  blink_led_off();
 		  }
 		  seconds = TimeDisplay;
-		  trace_printf("Second %u\n", seconds);
+
+		  trace_printf("count: %u\n", count);
+
+		  if(count != 0){
+			  //beeperOn();
+			  count--;
+		  } else {
+			  //close the relay.
+		  }
+	  }else{
+		  count = 9;
 	  }
 
-
-
-
-      // Count seconds on the trace device.
-      //trace_printf("Second %u\n", TimeDisplay);
 
       /*
        * if(secondInterrupt){
