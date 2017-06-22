@@ -21,20 +21,25 @@
 
 :extension:
   :executable: .out
-
 :paths:
   :test:
     - +:test/**
   :source:
     - ../src/**
+    - ../system/src/**
   :include:
     - ../include/**
+    - ../system/include/**
 
 :defines:
   # in order to add common defines:
   #  1) remove the trailing [] from the :common: section
   #  2) add entries to the :common: section (e.g. :test: has TEST defined)
-  :commmon: &common_defines [UNIT_TEST]
+  :commmon: &common_defines 
+    - UNIT_TEST
+    - HSE_VALUE=8000000
+    - USE_STDPERIPH_DRIVER
+    - STM32F10X_MD
   :test:
     - *common_defines
     - TEST
@@ -78,6 +83,7 @@
   :load_paths:
     - vendor/ceedling/plugins
   :enabled:
-    - stdout_pretty_tests_report
-    - module_generator
+#    - stdout_pretty_tests_report
+#    - module_generator
+    - stdout_gtestlike_tests_report
 ...

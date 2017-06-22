@@ -33,10 +33,11 @@
 
 
 #include "BlinkLed.h"
-#include "igniter.h"
-#include "sevenSegment.h"
 #include "beeper.h"
+#include "deadManSwitch.h"
+#include "igniter.h"
 #include "rcc.h"
+#include "sevenSegment.h"
 
 extern __IO uint32_t TimeDisplay;
 
