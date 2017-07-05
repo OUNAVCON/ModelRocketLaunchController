@@ -49,7 +49,7 @@ void initRtc(void)
     RTC_Configuration();
 
     /* Adjust time by values entered by the user on the hyperterminal */
-    Time_Adjust();
+  //  Time_Adjust();
 
     BKP_WriteBackupRegister(BKP_DR1, 0xA5A5);
   }
@@ -93,11 +93,7 @@ void initRtc(void)
 
   /* Clear reset flags */
   RCC_ClearFlag();
-
-
 }
-
-
 
 /**
   * @brief  Configures the RTC.
